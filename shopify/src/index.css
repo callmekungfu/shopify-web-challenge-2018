@@ -1,0 +1,101 @@
+*{
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.header{
+  height: 20vh;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  margin: 0;
+  align-items: center;
+}
+
+.header h1 {
+  width: 100%;
+  text-align: center;
+}
+
+.component {
+  width: 50%;
+  display: inline-block;
+  margin: 0;
+  padding: 30px 50px;
+  height: 80vh;
+  vertical-align: top
+}
+
+.search {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.search input[type="text"] {
+  padding: 15px;
+  border-color: #333;
+  border-radius: 3px;
+  border-width: 1px; 
+  font-size: 15px;
+  width: 100%
+}
+
+.form-group {
+  display: inline-block;
+}
+
+.large-form-group {
+  width: 75%;
+  padding-right: 20px;
+}
+
+.small-form-group {
+  width: 25%
+}
+
+.add-link {
+  text-decoration: underline;
+  color: #7433F1;
+}
+
+.add-link:hover {
+  cursor: pointer;
+}
+
+.btn-large {
+  font-size: 15px;
+  width: 100%;
+  padding: 15px 0px;
+  border: none;
+  border-radius: 3px;
+}
+
+.btn-large:hover {
+  cursor: pointer;
+  background-color: rgb(91, 40, 185)
+}
+
+.search-results table {
+  width: 100%;
+}
+
+td {
+  padding: 3px 0;
+}
+
+.table-header td {
+  font-weight: 600;
+  padding-bottom: 15px;
+}
+
+.bg-purple {
+  background-color: #7433F1;
+  color: white
+}
+
+.bg-purple-light {
+  background-color: #F3ECFE
+}
