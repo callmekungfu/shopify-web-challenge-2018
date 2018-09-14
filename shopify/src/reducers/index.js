@@ -79,7 +79,6 @@ const starredRepos = (state = {
 };
 
 const rootReducer = combineReducers({
-    test,
     searchResult,
     githubConn,
     starredRepos

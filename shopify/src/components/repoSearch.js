@@ -1,17 +1,26 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { searchGithub } from '../actions';
+import { searchGithub, starRepo } from '../actions';
 
 class RepoSearch extends Component {
     constructor(props) {
         super(props);
         this.handleSearch = this.handleSearch.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleAddStar = this.handleAddStar.bind(this);
         this.state = { searchValue: '' };
     }
 
-    componentDidUpdate() {
-
+    handleAddStar(e) {
+        const { fully } = this.props.searchResult;
+        const { dispatch, githubConn } = this.props;
+        const target = e.target.id;
+        fully.forEach((item) => {
+            if (item.id === parseInt(target, 10)) {
+                console.log(item);
+                dispatch(starRepo(item, githubConn.gh));
+            }
+        });
     }
 
     handleChange(e) {
@@ -25,10 +34,6 @@ class RepoSearch extends Component {
     }
 
     render() {
-        let array = [];
-        if (this.props.searchResult.loaded) {
-            array = this.props.searchResult.result.items.slice(0, 10);
-        }
         return (
             <div>
                 <form className="search" onSubmit={this.handleSearch}>
@@ -53,7 +58,7 @@ class RepoSearch extends Component {
                                     <td>{item.full_name}</td>
                                     <td>{item.language}</td>
                                     <td>{item.latest_release}</td>
-                                    <td><span className="add-link">Add</span></td>
+                                    <td><span role="button" className="add-link" id={item.id} onClick={this.handleAddStar}>Add</span></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -65,8 +70,8 @@ class RepoSearch extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const { searchResult } = state || { items: [], searching: false, loaded: false };
-    return { searchResult };
+    const { searchResult, githubConn } = state || { items: [], searching: false, loaded: false };
+    return { searchResult, githubConn };
 };
 
 export default connect(mapStateToProps)(RepoSearch);

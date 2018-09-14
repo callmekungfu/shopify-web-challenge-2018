@@ -6,14 +6,16 @@ import { getStarredRepos } from '../actions';
 let initFetched = false;
 
 class MyFavorites extends Component {
-    render() {
+    componentDidUpdate() {
         const { dispatch } = this.props;
-        const { loaded, loading, result } = this.props.starredRepos;
         if (this.props.githubConn.connected && !initFetched) {
-            
             dispatch(getStarredRepos(this.props.githubConn.gh));
             initFetched = true;
         }
+    }
+
+    render() {
+        const { loaded, loading, result } = this.props.starredRepos;
         return (
             <div>
                 <div className="search-results">
@@ -26,7 +28,7 @@ class MyFavorites extends Component {
                                 <td></td>
                             </tr>
                             {loaded && result.map(repo => (
-                                <tr>
+                                <tr key={repo.id}>
                                     <td>{repo.full_name}</td>
                                     <td>{repo.language}</td>
                                     <td>Latest Tag</td>

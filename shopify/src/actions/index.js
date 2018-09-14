@@ -16,6 +16,33 @@ export const STAR_REPO_REQUESTED = 'STAR_REPO_REQUESTED';
 export const STAR_REPO_SUCCESS = 'STAR_REPO_SUCCESS';
 export const STAR_REPO_FAILED = 'STAR_REPO_FAILED';
 
+const starRepoFailed = () => ({
+    type: STAR_REPO_FAILED
+});
+
+const starRepoRequested = () => ({
+    type: STAR_REPO_REQUESTED
+});
+
+const starRepoSuccess = gh => (dispatch) => {
+    dispatch(getStarredRepos(gh));
+    return {
+        type: STAR_REPO_SUCCESS
+    };
+};
+
+export const starRepo = (repo, gh) => (dispatch) => {
+    dispatch(starRepoRequested());
+    const target = gh.getRepo(repo.owner.login, repo.name);
+    target.star()
+        .then((err) => {
+            if (err.status === 204) {
+                dispatch(starRepoSuccess());
+            } else {
+                dispatch(starRepoFailed());
+            }
+        });
+};
 
 export const connectGithub = () => ({
     type: ACCESS_GITHUB,
@@ -35,8 +62,9 @@ const starredRepoReceived = list => ({
 
 export const getStarredRepos = gh => (dispatch) => {
     dispatch(starredRepoRequest());
+    console.log('called');
     const me = gh.getUser();
-    me.listStarredRepos((err, repos) => {
+    return me.listStarredRepos((err, repos) => {
         dispatch(starredRepoReceived(repos));
     });
 };
