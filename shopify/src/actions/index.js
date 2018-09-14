@@ -1,14 +1,45 @@
 import fetch from 'cross-fetch';
+import GitHub from 'github-api';
 
-export const CONFIG_TEST = 'CONFIG_TEST';
 export const SEARCH_GITHUB_REQUEST = 'SEARCH_GITHUB_REQUEST';
 export const SEARCH_GITHUB_RECEIVED = 'SEARCH_GITHUB_RECEIVED';
+
 export const GET_RESULT_RELEASE_REQUEST = 'GET_RESULT_RELEASE_REQUEST';
 export const GET_RESULT_RELEASE_RECEIVED = 'GET_RESULT_RELEASE_RECEIVED';
 
-export const testAction = () => ({
-    type: CONFIG_TEST,
+export const ACCESS_GITHUB = 'ACCESS_GITHUB';
+
+export const GET_STARRED_REPOS_REQUEST = 'GET_STARRED_REPOS_REQUEST';
+export const GET_STARRED_REPOS_RECEIVED = 'GET_STARRED_REPOS_RECEIVED';
+
+export const STAR_REPO_REQUESTED = 'STAR_REPO_REQUESTED';
+export const STAR_REPO_SUCCESS = 'STAR_REPO_SUCCESS';
+export const STAR_REPO_FAILED = 'STAR_REPO_FAILED';
+
+
+export const connectGithub = () => ({
+    type: ACCESS_GITHUB,
+    connection: new GitHub({
+        token: 'c69bac536d88b592cc16c5f67627b39615378f03'
+    })
 });
+
+const starredRepoRequest = () => ({
+    type: GET_STARRED_REPOS_REQUEST
+});
+
+const starredRepoReceived = list => ({
+    type: GET_STARRED_REPOS_RECEIVED,
+    list
+});
+
+export const getStarredRepos = gh => (dispatch) => {
+    dispatch(starredRepoRequest());
+    const me = gh.getUser();
+    me.listStarredRepos((err, repos) => {
+        dispatch(starredRepoReceived(repos));
+    });
+};
 
 const searchGithubRequest = () => ({
     type: SEARCH_GITHUB_REQUEST

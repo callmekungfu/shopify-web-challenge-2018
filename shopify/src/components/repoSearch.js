@@ -50,7 +50,7 @@ class RepoSearch extends Component {
                             </tr>
                             {this.props.searchResult.newLoad && this.props.searchResult.fully.map(item => (
                                 <tr key={item.id}>
-                                    <td>{item.name}</td>
+                                    <td>{item.full_name}</td>
                                     <td>{item.language}</td>
                                     <td>{item.latest_release}</td>
                                     <td><span className="add-link">Add</span></td>

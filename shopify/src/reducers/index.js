@@ -2,27 +2,14 @@ import {
     combineReducers
 } from 'redux';
 import {
-    CONFIG_TEST,
     SEARCH_GITHUB_REQUEST,
     SEARCH_GITHUB_RECEIVED,
     GET_RESULT_RELEASE_RECEIVED,
-    GET_RESULT_RELEASE_REQUEST
+    GET_STARRED_REPOS_REQUEST,
+    ACCESS_GITHUB,
+    GET_STARRED_REPOS_RECEIVED
 } from '../actions';
 
-const test = (state = {
-    working: false
-}, action) => {
-    switch (action.type) {
-        case CONFIG_TEST:
-            return Object.assign({}, state, {
-                working: true
-            });
-        default:
-            return state;
-    }
-};
-
-let working = 0;
 const searchResult = (state = {
     searching: false,
     loaded: false,
@@ -33,7 +20,8 @@ const searchResult = (state = {
         case SEARCH_GITHUB_REQUEST:
             return Object.assign({}, state, {
                 searching: true,
-                loaded: false
+                loaded: false,
+                fully: []
             });
         case SEARCH_GITHUB_RECEIVED:
             return Object.assign({}, state, {
@@ -41,9 +29,6 @@ const searchResult = (state = {
                 loaded: true,
                 result: action.json
             });
-        case GET_RESULT_RELEASE_REQUEST:
-            working = action.key;
-            return state;
         case GET_RESULT_RELEASE_RECEIVED:
             const newArr = state.fully;
             newArr.push(action.newItem);
@@ -56,9 +41,48 @@ const searchResult = (state = {
     }
 };
 
+const githubConn = (state = {
+    gh: {},
+    connected: false
+}, action) => {
+    switch (action.type) {
+        case ACCESS_GITHUB:
+            return Object.assign({}, state, {
+                gh: action.connection,
+                connected: true
+            });
+        default:
+            return state;
+    }
+};
+
+const starredRepos = (state = {
+    loading: false,
+    loaded: false,
+    results: []
+}, action) => {
+    switch (action.type) {
+        case GET_STARRED_REPOS_REQUEST:
+            return Object.assign({}, state, {
+                loading: true,
+                loaded: false
+            });
+        case GET_STARRED_REPOS_RECEIVED:
+            return Object.assign({}, state, {
+                loading: false,
+                loaded: true,
+                result: action.list
+            });
+        default:
+            return state;
+    }
+};
+
 const rootReducer = combineReducers({
     test,
-    searchResult
+    searchResult,
+    githubConn,
+    starredRepos
 });
 
 export default rootReducer;
