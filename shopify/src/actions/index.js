@@ -90,8 +90,6 @@ export const getStarredRepos = gh => (dispatch) => {
     dispatch(starredRepoRequest());
     const me = gh.getUser();
     return me.listStarredRepos((err, repos) => {
-        console.log(err);
-        console.log(repos);
         dispatch(starredRepoReceived(repos));
     });
 };
@@ -105,15 +103,29 @@ const searchGithubReceived = json => ({
     json
 });
 
-export const searchGithub = query => (dispatch) => {
+export const searchGithub = query => (dispatch, getState) => {
     dispatch(searchGithubRequest());
+    const { result } = getState().starredRepos;
     return fetch(`https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc`)
         .then(res => res.json())
         .then((json) => {
-            const array = json.items.slice(0, 10);
-            array.forEach((item, i) => {
-                dispatch(getReleaseTag(item, i));
-            });
+            let count = 0;
+            let counter = 0;
+            while (count < 10) {
+                let starred = false;
+                // const array = json.items.slice(0, 10);
+                for (let i = 0; i < result.length; i++) {
+                    starred = result[i].id === json.items[counter].id;
+                    if (starred) { break; }
+                }
+                if (starred) {
+                    counter++;
+                } else {
+                    dispatch(getReleaseTag(json.items[counter]));
+                    count++;
+                    counter++;
+                }
+            }
             dispatch(searchGithubReceived(json));
         });
 };
@@ -128,8 +140,7 @@ const getReleaseTagReceived = newItem => ({
     newItem
 });
 
-export const getReleaseTag = (data, key) => (dispatch) => {
-    dispatch(getReleaseTagRequest(key));
+export const getReleaseTag = data => (dispatch) => {
     fetch(`${data.url}/releases`)
     .then(res => res.json())
     .then((releases) => {
