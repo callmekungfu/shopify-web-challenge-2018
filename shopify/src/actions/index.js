@@ -94,6 +94,30 @@ export const getStarredRepos = gh => (dispatch) => {
     });
 };
 
+const getReleaseTagRequest = key => ({
+    type: GET_RESULT_RELEASE_REQUEST,
+    key
+});
+
+const getReleaseTagReceived = newItem => ({
+    type: GET_RESULT_RELEASE_RECEIVED,
+    newItem
+});
+
+export const getReleaseTag = data => (dispatch) => {
+    fetch(`${data.url}/releases`)
+    .then(res => res.json())
+    .then((releases) => {
+        if (releases.length > 0) {
+            const newData = Object.assign({}, data, { latest_release: releases[0].tag_name });
+            dispatch(getReleaseTagReceived(newData));
+        } else {
+            const newData = Object.assign({}, data, { latest_release: '-' });
+            dispatch(getReleaseTagReceived(newData));
+        }
+    });
+};
+
 const searchGithubRequest = () => ({
     type: SEARCH_GITHUB_REQUEST
 });
@@ -128,28 +152,4 @@ export const searchGithub = query => (dispatch, getState) => {
             }
             dispatch(searchGithubReceived(json));
         });
-};
-
-const getReleaseTagRequest = key => ({
-    type: GET_RESULT_RELEASE_REQUEST,
-    key
-});
-
-const getReleaseTagReceived = newItem => ({
-    type: GET_RESULT_RELEASE_RECEIVED,
-    newItem
-});
-
-export const getReleaseTag = data => (dispatch) => {
-    fetch(`${data.url}/releases`)
-    .then(res => res.json())
-    .then((releases) => {
-        if (releases.length > 0) {
-            const newData = Object.assign({}, data, { latest_release: releases[0].tag_name });
-            dispatch(getReleaseTagReceived(newData));
-        } else {
-            const newData = Object.assign({}, data, { latest_release: '-' });
-            dispatch(getReleaseTagReceived(newData));
-        }
-    });
 };
