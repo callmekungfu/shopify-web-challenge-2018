@@ -16,6 +16,10 @@ export const STAR_REPO_REQUESTED = 'STAR_REPO_REQUESTED';
 export const STAR_REPO_SUCCESS = 'STAR_REPO_SUCCESS';
 export const STAR_REPO_FAILED = 'STAR_REPO_FAILED';
 
+export const UNSTAR_REPO_REQUESTED = 'UNSTAR_REPO_REQUESTED';
+export const UNSTAR_REPO_SUCCESS = 'UNSTAR_REPO_SUCCESS';
+export const UNSTAR_REPO_FAILED = 'UNSTAR_REPO_FAILED';
+
 const starRepoFailed = () => ({
     type: STAR_REPO_FAILED
 });
@@ -35,12 +39,34 @@ export const starRepo = (repo, gh) => (dispatch) => {
     dispatch(starRepoRequested());
     const target = gh.getRepo(repo.owner.login, repo.name);
     target.star()
-        .then((err) => {
-            if (err.status === 204) {
-                dispatch(starRepoSuccess());
-            } else {
-                dispatch(starRepoFailed());
-            }
+        .then((err, success) => {
+            alert('successfully starred');
+            dispatch(starRepoSuccess(gh));
+        });
+};
+
+const unstarRepoFailed = () => ({
+    type: UNSTAR_REPO_FAILED
+});
+
+const unstarRepoRequested = () => ({
+    type: UNSTAR_REPO_REQUESTED
+});
+
+const unstarRepoSuccess = gh => (dispatch) => {
+    dispatch(getStarredRepos(gh));
+    return {
+        type: UNSTAR_REPO_SUCCESS
+    };
+};
+
+export const unstarRepo = (repo, gh) => (dispatch) => {
+    dispatch(unstarRepoRequested());
+    const target = gh.getRepo(repo.owner.login, repo.name);
+    target.unstar()
+        .then(() => {
+            alert('successfully remove starred');
+            dispatch(unstarRepoSuccess(gh));
         });
 };
 
@@ -62,9 +88,10 @@ const starredRepoReceived = list => ({
 
 export const getStarredRepos = gh => (dispatch) => {
     dispatch(starredRepoRequest());
-    console.log('called');
     const me = gh.getUser();
     return me.listStarredRepos((err, repos) => {
+        console.log(err);
+        console.log(repos);
         dispatch(starredRepoReceived(repos));
     });
 };
