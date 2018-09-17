@@ -7,7 +7,8 @@ import {
     GET_RESULT_RELEASE_RECEIVED,
     GET_STARRED_REPOS_REQUEST,
     ACCESS_GITHUB,
-    GET_STARRED_REPOS_RECEIVED
+    GET_STARRED_REPOS_RECEIVED,
+    REMOVE_FROM_SEARCH
 } from '../actions';
 
 const searchResult = (state = {
@@ -16,6 +17,7 @@ const searchResult = (state = {
     fully: [],
     newLoad: false
 }, action) => {
+    let temp = [];
     switch (action.type) {
         case SEARCH_GITHUB_REQUEST:
             return Object.assign({}, state, {
@@ -29,11 +31,22 @@ const searchResult = (state = {
                 loaded: true,
                 result: action.json
             });
-        case GET_RESULT_RELEASE_RECEIVED:
-            const newArr = state.fully;
-            newArr.push(action.newItem);
+        case REMOVE_FROM_SEARCH:
+            temp = state.fully;
+            console.log(action.id);
+            temp.forEach((item, i) => {
+                if (item.id === action.id) {
+                    temp.splice(i, 1);
+                }
+            });
             return Object.assign({}, state, {
-                fully: newArr,
+                fully: temp
+            });
+        case GET_RESULT_RELEASE_RECEIVED:
+            temp = state.fully;
+            temp.push(action.newItem);
+            return Object.assign({}, state, {
+                fully: temp,
                 newLoad: true
             });
         default:

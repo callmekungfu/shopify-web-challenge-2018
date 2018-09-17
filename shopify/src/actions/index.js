@@ -20,6 +20,30 @@ export const UNSTAR_REPO_REQUESTED = 'UNSTAR_REPO_REQUESTED';
 export const UNSTAR_REPO_SUCCESS = 'UNSTAR_REPO_SUCCESS';
 export const UNSTAR_REPO_FAILED = 'UNSTAR_REPO_FAILED';
 
+export const REMOVE_FROM_SEARCH = 'REMOVE_FROM_SEARCH';
+
+export const removeFromSearch = id => ({
+    type: REMOVE_FROM_SEARCH,
+    id
+});
+
+const starredRepoRequest = () => ({
+    type: GET_STARRED_REPOS_REQUEST
+});
+
+const starredRepoReceived = list => ({
+    type: GET_STARRED_REPOS_RECEIVED,
+    list
+});
+
+export const getStarredRepos = gh => (dispatch) => {
+    dispatch(starredRepoRequest());
+    const me = gh.getUser();
+    return me.listStarredRepos((err, repos) => {
+        dispatch(starredRepoReceived(repos));
+    });
+};
+
 const starRepoFailed = () => ({
     type: STAR_REPO_FAILED
 });
@@ -42,6 +66,7 @@ export const starRepo = (repo, gh) => (dispatch) => {
         .then((err, success) => {
             alert('successfully starred');
             dispatch(starRepoSuccess(gh));
+            dispatch(removeFromSearch(repo.id));
         });
 };
 
@@ -76,23 +101,6 @@ export const connectGithub = () => ({
         token: 'c69bac536d88b592cc16c5f67627b39615378f03'
     })
 });
-
-const starredRepoRequest = () => ({
-    type: GET_STARRED_REPOS_REQUEST
-});
-
-const starredRepoReceived = list => ({
-    type: GET_STARRED_REPOS_RECEIVED,
-    list
-});
-
-export const getStarredRepos = gh => (dispatch) => {
-    dispatch(starredRepoRequest());
-    const me = gh.getUser();
-    return me.listStarredRepos((err, repos) => {
-        dispatch(starredRepoReceived(repos));
-    });
-};
 
 const getReleaseTagRequest = key => ({
     type: GET_RESULT_RELEASE_REQUEST,
@@ -135,9 +143,8 @@ export const searchGithub = query => (dispatch, getState) => {
         .then((json) => {
             let count = 0;
             let counter = 0;
-            while (count < 10) {
+            while (count < 10 && count < json.items.length) {
                 let starred = false;
-                // const array = json.items.slice(0, 10);
                 for (let i = 0; i < result.length; i++) {
                     starred = result[i].id === json.items[counter].id;
                     if (starred) { break; }
