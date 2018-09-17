@@ -1,6 +1,8 @@
 import fetch from 'cross-fetch';
 import GitHub from 'github-api';
 
+import GITHUB_ACCESS_TOKEN from '../config';
+
 export const SEARCH_GITHUB_REQUEST = 'SEARCH_GITHUB_REQUEST';
 export const SEARCH_GITHUB_RECEIVED = 'SEARCH_GITHUB_RECEIVED';
 
@@ -98,7 +100,7 @@ export const unstarRepo = (repo, gh) => (dispatch) => {
 export const connectGithub = () => ({
     type: ACCESS_GITHUB,
     connection: new GitHub({
-        token: 'c69bac536d88b592cc16c5f67627b39615378f03'
+        token: GITHUB_ACCESS_TOKEN
     })
 });
 
